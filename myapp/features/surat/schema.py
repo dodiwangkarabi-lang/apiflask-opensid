@@ -22,11 +22,11 @@ class UserSchema(Schema):
 class SuratKeluarSchema(Schema):
     id = fields.Integer()
     nomor_urut = fields.Integer()
-    tanggal_penerimaan = fields.Date()
+    # tanggal_penerimaan = fields.Date()
     nomor_surat = fields.String()
     kode_surat = fields.String()
     tanggal_surat = fields.Date()
-    perihal = fields.String()
+    # perihal = fields.String()
     tujuan = fields.String()
     isi_singkat = fields.String()
     

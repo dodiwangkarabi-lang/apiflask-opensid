@@ -36,6 +36,18 @@ def cari(query_data):
         "query": query_data
     }
     
+# ----- detail surat keluar -----
+@surat_bp.get("/surat-keluar/<int:surat_keluar_id>/")
+@surat_bp.output(schema.SuratKeluarSchema)
+@surat_bp.doc(security=[{"BearerAuth": []}])
+# @jwt_required()
+def detail_surat_keluar(surat_keluar_id):
+    try:
+        surat_keluar = models.SuratKeluar.query.get_or_404(surat_keluar_id)
+    except:
+        abort(404)
+    
+    return surat_keluar
     
 @surat_bp.get("/surat-keluar/")
 @surat_bp.doc(security=[{"BearerAuth": []}])

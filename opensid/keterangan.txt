@@ -1,0 +1,6 @@
+letakkan file index.blade.php
+C:\laragon\www\opensidtakimpo\resources\views\admin\surat_keluar
+
+salin: semua yang ada di dalam folder "dist"
+paste:
+C:\laragon\www\opensidtakimpo\assets\static\react

@@ -13,7 +13,7 @@
         @if (can('u'))
             <a href="{{ ci_route('surat_masuk.form') }}" class="btn btn-social btn-success btn-sm visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block"><i class="fa fa-plus"></i> Tambah</a>
         @endif
-        @if (can('h'))
+        {{-- @if (can('h'))
             <a href="#confirm-delete" title="Hapus Data" onclick="deleteAllBox('mainform', '{{ ci_route('surat_masuk.delete_all') }}')" class="btn btn-social btn-danger btn-sm visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block hapus-terpilih"><i
                     class='fa fa-trash-o'></i> Hapus</a>
         @endif
@@ -34,9 +34,9 @@
             data-toggle="modal"
             data-target="#modalBox"
             data-title="Unduh Agenda Surat Masuk"
-        ><i class="fa fa-download"></i> Unduh</a>
+        ><i class="fa fa-download"></i> Unduh</a> --}}
     </div>
-    <div class="box-body">
+    {{-- <div class="box-body">
         <div class="row">
             <div class="col-sm-2">
                 <select id="tahun" class="form-control input-sm select2">
@@ -66,7 +66,7 @@
             </table>
         </div>
         </form>
-    </div>
+    </div> --}}
 </div>
 
     <div>

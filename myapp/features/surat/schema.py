@@ -18,6 +18,23 @@ class UserSchema(Schema):
     name = fields.String()
     
 
+# ----- surat masuk -----
+class SuratMasukSchema(Schema):
+    id = fields.Integer()
+    nomor_urut = fields.Integer()
+    # tanggal_penerimaan = fields.Date()
+    nomor_surat = fields.String()
+    kode_surat = fields.String()
+    tanggal_surat = fields.Date()
+    # perihal = fields.String()
+    tujuan = fields.String()
+    isi_singkat = fields.String()
+    
+    @post_load
+    def create_surat(self, data, **kwargs):
+        return models.SuratMasuk(**data)
+    
+
 # ----- surat keluar -----
 class SuratKeluarSchema(Schema):
     id = fields.Integer()

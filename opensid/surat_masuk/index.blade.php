@@ -2,7 +2,7 @@
 
 @push('css')
     <!-- ini react -->
-    <script type="module" crossorigin src="{{ asset('/static/react/assets/index-U8v6rx1f.js') }}"></script>
+    <script type="module" crossorigin src="{{ asset('/static/react/assets/index-D02dTFHx.js') }}"></script>
     <link rel="modulepreload" crossorigin href="{{ asset('/static/react/assets/p-CHqRYvYm-CK7oBGop.js') }}">
     <link rel="modulepreload" crossorigin href="{{ asset('/static/react/assets/p-ZjP4CjeZ-DJ1DGIsW.js') }}">
     <link rel="stylesheet" crossorigin href="{{ asset('/static/react/assets/index-DYoVH4N3.css') }}">
@@ -11,62 +11,43 @@
 <div class="box box-info">
     <div class="box-header">
         @if (can('u'))
-            <a href="{{ ci_route('surat_keluar.form') }}" class="btn btn-social btn-success btn-sm visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block"><i class="fa fa-plus"></i> Tambah</a>
+            <a href="{{ ci_route('surat_masuk.form') }}" class="btn btn-social btn-success btn-sm visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block"><i class="fa fa-plus"></i> Tambah</a>
         @endif
         @if (can('h'))
-            {{-- <a href="#confirm-delete" title="Hapus Data" onclick="deleteAllBox('mainform', '{{ ci_route('surat_keluar.delete_all') }}')" class="btn btn-social btn-danger btn-sm visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block hapus-terpilih"><i
-                    class='fa fa-trash-o'
-                ></i> Hapus</a> --}}
+            <a href="#confirm-delete" title="Hapus Data" onclick="deleteAllBox('mainform', '{{ ci_route('surat_masuk.delete_all') }}')" class="btn btn-social btn-danger btn-sm visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block hapus-terpilih"><i
+                    class='fa fa-trash-o'></i> Hapus</a>
         @endif
-        <!-- <a
-            href="{{ ci_route('surat_keluar/dialog/cetak') }}"
+        <a
+            href="{{ ci_route('surat_masuk/dialog/cetak') }}"
             class="btn btn-social bg-purple btn-sm visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block"
-            title="Cetak Agenda Surat Keluar"
+            title="Cetak Agenda Surat Masuk"
             data-remote="false"
             data-toggle="modal"
             data-target="#modalBox"
-            data-title="Cetak Agenda Surat Keluar"
+            data-title="Cetak Agenda Surat Masuk"
         ><i class="fa fa-print "></i> Cetak</a>
         <a
-            href="{{ ci_route('surat_keluar/dialog/unduh') }}"
+            href="{{ ci_route('surat_masuk/dialog/unduh') }}"
             class="btn btn-social bg-navy btn-sm visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block"
-            title="Unduh Agenda Surat Keluar"
+            title="Unduh Agenda Surat Masuk"
             data-remote="false"
             data-toggle="modal"
             data-target="#modalBox"
-            data-title="Unduh Agenda Surat Keluar"
-        ><i class="fa fa-download"></i> Unduh</a> -->
+            data-title="Unduh Agenda Surat Masuk"
+        ><i class="fa fa-download"></i> Unduh</a>
     </div>
-    {{-- tabel --}}
-    {{-- <div class="box-body">
-        <div class="row mepet">
-            <div class="col-sm-3">
-                <input type="text"
-                    id="cari_dokumen"
-                    class="form-control input-sm"
-                    placeholder="Cari Dokumen...">
-            </div>
-            <div class="col-sm-3">
-                <select id="klasifikasi" class="form-control input-sm select2">
-                    <option value="">Semua Klasifikasi</option>
-
-                    @foreach($klasifikasi as $item)
-                        <option value="{{ $item->kode }}">
-                            {{ $item->kode }} - {{ $item->nama }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <!-- <div class="col-sm-2">
+    <div class="box-body">
+        <div class="row">
+            <div class="col-sm-2">
                 <select id="tahun" class="form-control input-sm select2">
                     <option value="">Pilih Tahun</option>
                     @foreach ($tahun as $value)
                         <option value="{{ $value }}">{{ $value }}</option>
                     @endforeach
                 </select>
-            </div> -->
+            </div>
         </div>
-        <hr class="batas">
+        <hr>
         {!! form_open(null, 'id="mainform" name="mainform"') !!}
         <div class="table-responsive">
             <table class="table table-bordered table-hover tabel-daftar" id="tabeldata">
@@ -75,30 +56,32 @@
                         <th><input type="checkbox" id="checkall" /></th>
                         <th>No. Urut</th>
                         <th width="120">Aksi</th>
+                        <th>Tanggal Penerimaan</th>
                         <th>Nomor Surat</th>
                         <th>Tanggal Surat</th>
-                        <th nowrap>Ditujukan Kepada</th>
+                        <th nowrap>Pengirim</th>
                         <th>Isi Singkat</th>
                     </tr>
                 </thead>
             </table>
         </div>
         </form>
-    </div> --}}
+    </div>
 </div>
 
-<div>
+    <div>
          <div id="root"></div>
     </div>
 
 @push('scripts')
 <script>
     window.APP_CONFIG = {
+        feature: "surat_masuk",
         routes: {
             surat_keluar: {
                 datatables: "{{ ci_route('surat_keluar.datatables') }}",
-                tambah: "{{ ci_route('surat_keluar.form') }}",
-                suratKeluarForm: "{{ route('buku-umum.surat_keluar.form', ['id' => '__ID__']) }}"
+                tambah: "{{ ci_route('surat_masuk.form') }}",
+                suratKeluarForm: "{{ route('buku-umum.surat_masuk.form', ['id' => '__ID__']) }}"
                 .replace('__ID__', '{id}')
             }
         }
@@ -112,14 +95,13 @@
                 responsive: true,
                 processing: true,
                 serverSide: true,
-                searching: false,
                 order: [
-                    [4, 'desc']
+                    [3, 'desc']
                 ],
                 ajax: {
-                    url: "{{ ci_route('surat_keluar.datatables') }}",
+                    url: "{{ ci_route('surat_masuk.datatables') }}",
                     data: function(req) {
-                        req.klasifikasi = $('#klasifikasi').val();
+                        req.tahun = $('#tahun').val();
                     }
                 },
                 columns: [{
@@ -139,6 +121,10 @@
                         orderable: false
                     },
                     {
+                        data: 'tanggal_penerimaan',
+                        name: 'tanggal_penerimaan'
+                    },
+                    {
                         data: 'nomor_surat',
                         name: 'nomor_surat',
                         searchable: false,
@@ -146,11 +132,13 @@
                     },
                     {
                         data: 'tanggal_surat',
-                        name: 'tanggal_surat'
+                        name: 'tanggal_surat',
+                        searchable: false,
+                        orderable: false
                     },
                     {
-                        data: 'tujuan',
-                        name: 'tujuan'
+                        data: 'pengirim',
+                        name: 'pengirim'
                     },
                     {
                         data: 'isi_singkat',
@@ -165,7 +153,7 @@
                 TableData.column(0).visible(false);
             }
 
-            $('#klasifikasi').change(function() {
+            $('#tahun').change(function() {
                 TableData.draw()
             })
         });

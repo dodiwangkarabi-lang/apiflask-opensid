@@ -1,2 +1,0 @@
-username = "Desaku"
-password = "123@Admin"

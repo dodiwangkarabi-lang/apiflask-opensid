@@ -12,6 +12,43 @@ from myapp.config import BASE_DIR
 
 INDEX_DIR = BASE_DIR / "media" / "index"
 
+# ----- helper -----
+from .helpers import (
+    MODEL_PENCARIAN_SURAT_KELUAR, MODEL_PENCARIAN_SURAT_MASUK
+)
+
+class BuildModelUC:
+    def __init__(self, tipe="surat_keluar"):
+        if tipe == "surat_masuk":
+            self.search_engine = MODEL_PENCARIAN_SURAT_KELUAR.search_engine
+            self.repo = MODEL_PENCARIAN_SURAT_KELUAR.repo
+        elif tipe == "surat_keluar":
+            self.search_engine = MODEL_PENCARIAN_SURAT_MASUK.search_engine
+            self.repo = MODEL_PENCARIAN_SURAT_MASUK.repo
+        else:
+            self.search_engine = MODEL_PENCARIAN_SURAT_KELUAR.search_engine
+            self.repo = MODEL_PENCARIAN_SURAT_KELUAR.repo
+
+    def _build(self, text_field: str="isi_singkat"):
+        documents = [
+            {
+                "id": surat.id,
+                "isi_singkat": surat.isi_singkat,
+                "nomor_surat": surat.nomor_surat,
+                "tanggal_surat": surat.tanggal_surat,
+                "lokasi_arsip": surat.lokasi_arsip,
+                "nomor_urut": surat.nomor_urut,
+                "kode_surat": surat.kode_surat
+            }
+            for surat in self.repo.get_all()
+        ]
+            
+        self.search_engine.build(documents, text_field)
+        
+        
+    def execute(self, text_field: str="isi_singkat"):
+        self._build(text_field)
+
 
 class SearchEngineUseCase:
     def __init__(self, search_engine =None, repo=None, tipe=""):
@@ -51,19 +88,24 @@ class SearchEngineUseCase:
     def build(self, documents: list[dict] = [], text_field: str="isi_singkat"):
         if self.repo is None:
             self.repo = repository.SuratKeluarRepository()
+            
+        if documents:
+            pass
+        else:
         
-        documents = [
-            {
-                "id": surat.id,
-                "isi_singkat": surat.isi_singkat,
-                "nomor_surat": surat.nomor_surat,
-                "tanggal_surat": surat.tanggal_surat,
-                "lokasi_arsip": surat.lokasi_arsip,
-                "nomor_urut": surat.nomor_urut,
-                "kode_surat": surat.kode_surat
-            }
-            for surat in self.repo.get_all()
-        ]
+            documents = [
+                {
+                    "id": surat.id,
+                    "isi_singkat": surat.isi_singkat,
+                    "nomor_surat": surat.nomor_surat,
+                    "tanggal_surat": surat.tanggal_surat,
+                    "lokasi_arsip": surat.lokasi_arsip,
+                    "nomor_urut": surat.nomor_urut,
+                    "kode_surat": surat.kode_surat
+                }
+                for surat in self.repo.get_all()
+            ]
+            
         self.search_engine.build(documents, text_field)
     
     def search(self, keyword: str, top_k: int = 20, **kwargs) -> list[dict]:

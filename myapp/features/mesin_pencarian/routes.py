@@ -37,6 +37,19 @@ def cari(query_data):
     # username = get_jwt_identity()
     # return {"message": "cari", "username": ""}
     
+# =====================================================
+# buid model
+# =====================================================
+@pencarian_bp.get("/build-model/")
+def build_model():
+    uc_surat_keluar = usecases.BuildModelUC(tipe="surat_keluar")
+    uc_surat_keluar.execute()
+    
+    uc_surat_masuk = usecases.BuildModelUC(tipe="surat_masuk")
+    uc_surat_masuk.execute()
+    
+    return {"message": "model telah dibangun"}
+    
 @pencarian_bp.get("/cari-surat-masuk/")
 @pencarian_bp.input(schema.PencarianRequestSchema, location="query")
 @pencarian_bp.output(schema.HasilPencarianSchema(many=True))

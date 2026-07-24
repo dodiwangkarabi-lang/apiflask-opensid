@@ -7,7 +7,7 @@ from pathlib import Path
 from .utils import TextPreprocessor
 
 class SearchEngine:
-    def __init__(self, index_file: str = "index.pkl", file_location=None):
+    def __init__(self, index_file: str = "index_surat_keluar.pkl", file_location=None):
         self.index_file = Path(index_file)
         if file_location:
             self.index_file = Path(file_location)

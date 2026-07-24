@@ -22,6 +22,9 @@ pencarian_bp = APIBlueprint(
     url_prefix="/pencarian"
 )
 
+# =====================================================
+# pencarian surat keluar
+# =====================================================
 @pencarian_bp.get("/")
 @pencarian_bp.input(schema.PencarianRequestSchema, location="query")
 @pencarian_bp.output(schema.HasilPencarianSchema(many=True))
@@ -49,7 +52,10 @@ def build_model():
     uc_surat_masuk.execute()
     
     return {"message": "model telah dibangun"}
-    
+  
+# =====================================================
+# pencarian surat masuk
+# =====================================================  
 @pencarian_bp.get("/cari-surat-masuk/")
 @pencarian_bp.input(schema.PencarianRequestSchema, location="query")
 @pencarian_bp.output(schema.HasilPencarianSchema(many=True))

@@ -73,7 +73,7 @@ class SearchEngineUseCase:
             )
         elif tipe == "surat_keluar":
             self.search_engine = SearchEngine(
-                index_file=INDEX_DIR / "index.pkl"
+                index_file=INDEX_DIR / "index_surat_keluar.pkl"
             )
         elif tipe == "arsip":
             self.search_engine = SearchEngine(
@@ -81,7 +81,7 @@ class SearchEngineUseCase:
             )
         else:
             self.search_engine = SearchEngine(
-                index_file=INDEX_DIR / "index.pkl"
+                index_file=INDEX_DIR / "index_surat_keluar.pkl"
             )
         
     

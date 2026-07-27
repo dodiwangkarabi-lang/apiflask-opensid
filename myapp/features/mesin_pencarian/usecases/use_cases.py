@@ -14,7 +14,8 @@ INDEX_DIR = BASE_DIR / "media" / "index"
 
 # ----- helper -----
 from .helpers import (
-    MODEL_PENCARIAN_SURAT_KELUAR, MODEL_PENCARIAN_SURAT_MASUK
+    MODEL_PENCARIAN_SURAT_KELUAR, MODEL_PENCARIAN_SURAT_MASUK,
+    MODEL_PENCARIAN_ARSIP
 )
 
 class BuildModelUC:
@@ -25,6 +26,9 @@ class BuildModelUC:
         elif tipe == "surat_keluar":
             self.search_engine = MODEL_PENCARIAN_SURAT_MASUK.search_engine
             self.repo = MODEL_PENCARIAN_SURAT_MASUK.repo
+        elif tipe == "arsip":
+            self.search_engine = MODEL_PENCARIAN_ARSIP.search_engine
+            self.repo = MODEL_PENCARIAN_ARSIP.repo
         else:
             self.search_engine = MODEL_PENCARIAN_SURAT_KELUAR.search_engine
             self.repo = MODEL_PENCARIAN_SURAT_KELUAR.repo

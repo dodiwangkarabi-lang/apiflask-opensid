@@ -51,6 +51,45 @@ from sqlalchemy import select
 from myapp.extensions import db
 
 ModelType = TypeVar("ModelType")
+from abc import ABC, abstractmethod
+
+class Base(ABC):
+    @abstractmethod
+    def get(self, id: Any) -> ModelType | None:
+        pass
+    
+    @abstractmethod
+    def get_all(self) -> list[ModelType]:
+        pass
+    
+    @abstractmethod
+    def filter(self, *criteria) -> list[ModelType]:
+        pass
+    
+    @abstractmethod
+    def filter_by(self, **kwargs) -> list[ModelType]:
+        pass
+    
+    @abstractmethod
+    def first(self, *criteria) -> ModelType | None:
+        pass
+    
+    @abstractmethod
+    def create(self, **kwargs) -> ModelType:
+        pass
+    
+    @abstractmethod
+    def update(self, obj: ModelType, **kwargs) -> ModelType:
+        pass
+    
+    @abstractmethod
+    def delete(self, obj: ModelType) -> None:
+        pass
+    
+    @abstractmethod
+    def first_by(self, **kwargs) -> ModelType | None:
+        pass
+    
 
 
 class BaseRepository(Generic[ModelType]):

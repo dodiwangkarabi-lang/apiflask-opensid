@@ -45,13 +45,38 @@ def cari(query_data):
 # =====================================================
 @pencarian_bp.get("/build-model/")
 def build_model():
+    # ----- build surat keluar -----
     uc_surat_keluar = usecases.BuildModelUC(tipe="surat_keluar")
     uc_surat_keluar.execute()
     
+    # ----- surat masuk -----
     uc_surat_masuk = usecases.BuildModelUC(tipe="surat_masuk")
     uc_surat_masuk.execute()
     
+    # ----- arsip -----
+    uc_arsip = usecases.BuildModelUC(tipe="arsip")
+    uc_arsip.execute()
+    
     return {"message": "model telah dibangun"}
+
+# =====================================================
+# pencarian arsip
+# =====================================================
+@pencarian_bp.get("/cari-arsip/")
+@pencarian_bp.input(schema.PencarianRequestSchema, location="query")
+@pencarian_bp.output(schema.HasilPencarianSchema(many=True))
+@pencarian_bp.doc(security=[{"BearerAuth": []}])
+# @jwt_required()
+def cari_arsip(query_data):
+    repo = repository.ArsipRepository()
+    uc = usecases.SearchEngineUseCase(
+        repo=repo,
+        tipe="arsip"
+    )
+    keyword = query_data["q"]
+    hasil_pencarian = uc.search(keyword)
+    
+    return hasil_pencarian
   
 # =====================================================
 # pencarian surat masuk

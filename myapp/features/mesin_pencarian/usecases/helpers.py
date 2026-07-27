@@ -25,6 +25,11 @@ MODEL_PENCARIAN_SURAT_MASUK = SearchModel(
     repo=repository.SuratMasukRepository()
 )
 
+MODEL_PENCARIAN_ARSIP = SearchModel(
+    search_engine=SearchEngine(index_file=INDEX_DIR / "index_arsip.pkl"),
+    repo=repository.ArsipRepository()
+)
+
 """
 Usage:
 

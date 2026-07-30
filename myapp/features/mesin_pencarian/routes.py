@@ -16,6 +16,9 @@ from myapp.features.surat import repository
 # ----- auth -----
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
+# ----- helper -----
+from .helpers import filter_hasil
+
 pencarian_bp = APIBlueprint(
     "pencarian",
     __name__,
@@ -33,7 +36,21 @@ pencarian_bp = APIBlueprint(
 def cari(query_data):
     uc = usecases.SearchEngineUseCase()
     keyword = query_data["q"]
+    kode_surat = query_data["kode_surat"]
+    
     hasil_pencarian = uc.search(keyword)
+    
+    # filter
+    if kode_surat:
+        hasil_pencarian = filter_hasil(
+            data=hasil_pencarian,
+            kode_surat=kode_surat
+        )
+    #     hasil_pencarian = [
+    #         i
+    #         for i in hasil_pencarian
+    #         if i["document"]["kode_surat"] == kode_surat
+    #     ]
     
     return hasil_pencarian
     
@@ -76,6 +93,13 @@ def cari_arsip(query_data):
     keyword = query_data["q"]
     hasil_pencarian = uc.search(keyword)
     
+    kode_surat = query_data["kode_surat"]
+    if kode_surat:
+        hasil_pencarian = filter_hasil(
+            data=hasil_pencarian,
+            kode_surat=kode_surat
+        )
+    
     return hasil_pencarian
   
 # =====================================================
@@ -101,5 +125,12 @@ def cari_surat_masuk(query_data):
     )
     keyword = query_data["q"]
     hasil_pencarian = uc.search(keyword)
+    
+    kode_surat = query_data["kode_surat"]
+    if kode_surat:
+        hasil_pencarian = filter_hasil(
+            data=hasil_pencarian,
+            kode_surat=kode_surat
+        )
     
     return hasil_pencarian

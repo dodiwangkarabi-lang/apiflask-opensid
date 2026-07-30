@@ -23,6 +23,7 @@ class HasilPencarianSchema(Schema):
 
 class PencarianRequestSchema(Schema):
     q = fields.String(load_default="")
+    kode_surat = fields.String(load_default="")
     
 
 # # models

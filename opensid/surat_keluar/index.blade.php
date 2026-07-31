@@ -92,20 +92,24 @@
     </div>
 
 @push('scripts')
-<script>
-    window.APP_CONFIG = {
-        feature: "surat",
-        routes: {
-            surat_keluar: {
-                datatables: "{{ ci_route('surat_keluar.datatables') }}",
-                tambah: "{{ ci_route('surat_keluar.form') }}",
-                suratKeluarForm: "{{ route('buku-umum.surat_keluar.form', ['id' => '__ID__']) }}"
-                .replace('__ID__', '{id}')
+    <script>
+        window.APP_CONFIG = {
+            daftarKlasifikasi: [
+                { kode: "000", nama: "UMUM" },
+                { kode: "400.8", nama: "KEPENDUDUKAN" }
+            ],
+            feature: "surat",
+            routes: {
+                surat_keluar: {
+                    datatables: "{{ ci_route('surat_keluar.datatables') }}",
+                    tambah: "{{ ci_route('surat_keluar.form') }}",
+                    suratKeluarForm: "{{ route('buku-umum.surat_keluar.form', ['id' => '__ID__']) }}"
+                    .replace('__ID__', '{id}')
+                }
             }
         }
-    }
-    
-</script>
+        
+    </script>
 
     <script>
         $(document).ready(function() {

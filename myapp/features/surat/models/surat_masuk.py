@@ -96,6 +96,9 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from myapp.extensions import db
 
+from ..repository.persistance import Persistence
+
+# from ..services.klasifikasi_surat_service import KlasifikasiSuratService
 
 class SuratMasuk(db.Model):
     __tablename__ = "surat_masuk"
@@ -163,3 +166,18 @@ class SuratMasuk(db.Model):
         nullable=True,
         server_default="",
     )
+    
+    def save(self, commit=True):
+        Persistence.save(self, commit)
+        
+    def delete(self):
+        Persistence.delete(self)
+        
+    def set_klasifikiasi(self, save=True):
+        # service = KlasifikasiSuratService(self)
+        # hasil = service.prediksi()
+        # self.kode_surat = hasil
+        
+        # if save:
+        #     self.save()
+        pass

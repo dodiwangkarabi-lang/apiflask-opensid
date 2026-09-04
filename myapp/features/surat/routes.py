@@ -13,15 +13,56 @@ from myapp.features.surat import models
 # ----- auth -----
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
-surat_bp = APIBlueprint(
-    "surat",
-    __name__,
-    url_prefix="/surat"
-)
+surat_bp = APIBlueprint("surat", __name__, url_prefix="/surat")
 
 # ----- skema -----
 from .schema import CariSchema
 from . import schema
+
+# ----- service -----
+from .services import PencarianSuratService
+
+# ----- semua surat (Surat Masuk | Surat Keluar) -----
+@surat_bp.get("/semua-surat")
+@surat_bp.doc(security=[{"BearerAuth": []}])
+@surat_bp.input(schema.SuratSchema, location="query")
+@surat_bp.output(schema.PaginationSuratSchema(many=False))
+# @jwt_required()
+def semua_surat(query_data):
+    data_request = query_data
+    page = data_request.get("page", 1)
+    page_size = data_request.get("page_size", 10)
+
+    surat_repository = repository.surat_repository.SuratRepository()
+    hasil = surat_repository.semua_surat(page=page, page_size=page_size)
+
+    return hasil
+
+
+@surat_bp.get("/cari-surat")
+@surat_bp.doc(security=[{"BearerAuth": []}])
+@surat_bp.input(schema.CariSuratRequestSchema, location="query")
+@surat_bp.output(schema.HasilPencarianSuratResponseSchema(many=True))
+# @jwt_required()
+def cari_surat(query_data):
+    data_request = query_data
+
+    surat_repository = repository.SuratRepository()
+    pencarian_susrat_service = PencarianSuratService(surat_repository=surat_repository)
+    hasil = pencarian_susrat_service.cari(
+        keyword=data_request["keyword"],
+        kode_surat=data_request["kode_surat"],
+        nilai_kemiripan_min=(
+            float(data_request["nilai_kemiripan_min"])
+            if data_request["nilai_kemiripan_min"]
+            else data_request["nilai_kemiripan_min"]
+        ),
+    )
+    # print(hasil)
+    # print(hasil)
+    return hasil
+    # return data_request
+
 
 @surat_bp.get("/cari")
 @surat_bp.doc(security=[{"BearerAuth": []}])
@@ -29,13 +70,14 @@ from . import schema
 # @jwt_required()
 def cari(query_data):
     # username = get_jwt_identity()
-    
+
     return {
-        "message": "cari", 
+        "message": "cari",
         # "username": username,
-        "query": query_data
+        "query": query_data,
     }
-    
+
+
 # ----- detail surat masuk -----
 @surat_bp.get("/surat-masuk/<int:surat_masuk_id>/")
 @surat_bp.output(schema.SuratMasukSchema)
@@ -46,9 +88,10 @@ def detail_surat_masuk(surat_masuk_id):
         surat_masuk = models.SuratMasuk.query.get_or_404(surat_masuk_id)
     except:
         abort(404)
-    
+
     return surat_masuk
-    
+
+
 # ----- detail surat keluar -----
 @surat_bp.get("/surat-keluar/<int:surat_keluar_id>/")
 @surat_bp.output(schema.SuratKeluarSchema)
@@ -59,65 +102,68 @@ def detail_surat_keluar(surat_keluar_id):
         surat_keluar = models.SuratKeluar.query.get_or_404(surat_keluar_id)
     except:
         abort(404)
-    
+
     return surat_keluar
-    
+
+
 @surat_bp.get("/surat-keluar/")
 @surat_bp.doc(security=[{"BearerAuth": []}])
-@surat_bp.input(schema.QuerySchema, location="query") # patokannya adalah location=query (GET | POST | FORMDATA)
+@surat_bp.input(
+    schema.QuerySchema, location="query"
+)  # patokannya adalah location=query (GET | POST | FORMDATA)
 @surat_bp.output(schema.SuratKeluarPaginationSchema)
 # @jwt_required()
 def surat_keluar(query_data):
     # username = get_jwt_identity()
     params = query_data
     surat_masuk_repo = repository.SuratKeluarRepository()
-    
+
     # ----- helpers -----
     def cari(query, keyword):
         if keyword:
-            query = query.filter(
-                models.SuratKeluar.isi_singkat.like(f"%{keyword}%")
-            )
+            query = query.filter(models.SuratKeluar.isi_singkat.like(f"%{keyword}%"))
         return query
-    
+
     # surat_keluar_qs = surat_masuk_repo.get_all()
     surat_keluar_qs = models.SuratKeluar.query
-    
+
     # ----- pencarian -----
     if params.get("q"):
         keyword = f"%{params['q']}%"
         surat_keluar_qs = surat_keluar_qs.filter(
             models.SuratKeluar.isi_singkat.like(keyword)
         )
-    
-    
+
     # ----- paginasi -----
     pagination = surat_keluar_qs.paginate(
-        page = params["page"],
-        per_page = params["limit"],
-        error_out=False
+        page=params["page"], per_page=params["limit"], error_out=False
     )
-    
-    
-    
+
     # return surat_keluar_qs
     # return surat_keluar_qs
-    
+
     next_url = None
     prev_url = None
-    
+
     if pagination.has_next:
-        next_url = url_for("surat.surat_keluar", page=pagination.next_num, per_page=params["limit"], _external=True)
-        
+        next_url = url_for(
+            "surat.surat_keluar",
+            page=pagination.next_num,
+            per_page=params["limit"],
+            _external=True,
+        )
+
     if pagination.has_prev:
-        prev_url = url_for("surat.surat_keluar", page=pagination.prev_num, per_page=params["limit"], _external=True)
-        
-    
-    
+        prev_url = url_for(
+            "surat.surat_keluar",
+            page=pagination.prev_num,
+            per_page=params["limit"],
+            _external=True,
+        )
+
     return {
         "count": pagination.total,
         "next": next_url,
         "previous": prev_url,
-        "results": pagination.items
+        "results": pagination.items,
     }
-    

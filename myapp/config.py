@@ -6,6 +6,7 @@ from pathlib import Path
 from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent # myapp
+MEDIA_ROOT = BASE_DIR / "media"
 
 class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "secret-key")

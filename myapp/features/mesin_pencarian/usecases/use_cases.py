@@ -5,7 +5,7 @@
 from myapp.features.mesin_pencarian.services import SearchEngine
 
 # ----- repo -----
-from myapp.features.surat import models
+# from myapp.features.surat import models
 from myapp.features.surat import repository
 
 from myapp.config import BASE_DIR

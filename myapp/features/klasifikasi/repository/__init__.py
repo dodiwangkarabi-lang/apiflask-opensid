@@ -1,0 +1,1 @@
+from .klasifikasi_repository import KlasifikasiSuratRepository

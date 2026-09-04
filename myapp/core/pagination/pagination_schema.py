@@ -9,6 +9,7 @@ class BasePaginationSchema(Schema):
     pages = Integer()
     next = Integer(allow_none=True)
     previous = Integer(allow_none=True)
+    page_size = Integer(allow_none=True, load_default=10)
 
 
 class PaginationQuerySchema(Schema):

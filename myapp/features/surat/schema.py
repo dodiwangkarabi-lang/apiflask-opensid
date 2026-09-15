@@ -27,6 +27,17 @@ class SuratMasukModelSchemaRequest(SQLAlchemyAutoSchema):
             # "isi_disposisi",
             # "berkas_scan", "lokasi_arsip",
             # "nomor_urut"
+        ) 
+        
+class SuratKeluarModelSchemaRequest(SQLAlchemyAutoSchema):
+    class Meta:
+        model = models.SuratKeluar
+        load_instance = False
+        exclude=(
+            "id", "config_id",
+            # "isi_disposisi",
+            # "berkas_scan", "lokasi_arsip",
+            # "nomor_urut"
         )  
 
         

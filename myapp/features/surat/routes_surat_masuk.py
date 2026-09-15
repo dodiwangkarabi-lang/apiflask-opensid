@@ -27,7 +27,7 @@ from myapp.features.surat import dto
 # ----- services -----
 from myapp.features.surat import services
 
-@surat_masuk_bp.get("/semua-surat/") 
+@surat_masuk_bp.get("/semua/") 
 @surat_masuk_bp.doc(security=[{"BearerAuth": []}])
 @surat_masuk_bp.input(schema.SuratSchema, location="query", arg_name="query_data")
 @surat_masuk_bp.output(schema.PaginationSuratSchema(many=False))

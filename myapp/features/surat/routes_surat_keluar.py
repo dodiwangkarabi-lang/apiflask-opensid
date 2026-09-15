@@ -42,13 +42,12 @@ def semua_surat(query_data):
 
 @surat_keluar_bp.post("/tambah/")
 @surat_keluar_bp.doc(
-    summary="Tambah Surat Masuk",
+    summary="Tambah Surat Keluar",
     security=[{"BearerAuth": []}]
 )
 @surat_keluar_bp.input(schema.SuratKeluarModelSchemaRequest, location="json", arg_name="query_data")
-@surat_keluar_bp.output(schema.PaginationSuratMasukModelSchema(many=False))
+@surat_keluar_bp.output(schema.paginationSuratKelurModelSchema(many=False))
 def tambah(query_data):
-    # data = dto.SuratMasukDTO(**query_data)
     data = query_data
     
     res = services.surat_keluar_service.create(**data)

@@ -37,6 +37,8 @@ def create_app(config_class=Config):
     from myapp.features.auth.routes import auth_bp
     from myapp.features.mesin_pencarian.routes import pencarian_bp
     from myapp.features.surat.routes import surat_bp
+    from myapp.features.surat.routes_surat_masuk import surat_masuk_bp
+    from myapp.features.surat.routes_surat_keluar import surat_keluar_bp
     from myapp.features.klasifikasi.routes import klasifikasi_surat_bp
 
     # Register blueprints
@@ -44,5 +46,7 @@ def create_app(config_class=Config):
     app.register_blueprint(pencarian_bp)
     app.register_blueprint(surat_bp)
     app.register_blueprint(klasifikasi_surat_bp)
+    app.register_blueprint(surat_masuk_bp)
+    app.register_blueprint(surat_keluar_bp)
 
     return app

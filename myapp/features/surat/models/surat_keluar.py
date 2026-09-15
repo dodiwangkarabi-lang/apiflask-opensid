@@ -246,6 +246,28 @@ class SuratKeluar(db.Model):
         nullable=True,
     )
     
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "nomor_urut": self.nomor_urut,
+            "nomor_surat": self.nomor_surat,
+            "kode_surat": self.kode_surat,
+            "tanggal_surat": self.tanggal_surat,
+            "tanggal_catat": self.tanggal_catat,
+            "tujuan": self.tujuan,
+            "isi_singkat": self.isi_singkat,
+            "berkas_scan": self.berkas_scan,
+            "ekspedisi": self.ekspedisi,
+            "tanggal_pengiriman": self.tanggal_pengiriman,
+            "tanda_terima": self.tanda_terima,
+            "keterangan": self.keterangan,
+            "lokasi_arsip": self.lokasi_arsip,
+            "created_at": self.created_at,
+            "created_by": self.created_by,
+            "updated_at": self.updated_at,
+            "updated_by": self.updated_by,
+        }
+    
     def save(self, commit=True):
         Persistence.save(self, commit)
         

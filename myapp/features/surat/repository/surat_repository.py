@@ -9,9 +9,98 @@ from myapp.features.surat import models
 
 from ..models import SuratMasuk,  SuratKeluar
 
+# ----- dto -----
+# from myapp.features.shared.dto import dto
+
 
 # from myapp.utils import paginasi
 from myapp.features.core.utils import paginated
+
+class SuratMasukRepository:
+    def __init__(self, session=None):
+            if session is None:
+                session = db.session
+            self.session = session
+            
+    
+    def tambah(self, **kwargs) -> SuratMasuk:
+        obj = SuratMasuk(**kwargs)
+        self.session.add(obj)
+        self.session.flush()
+        # self.session.commit()
+        self.session.refresh(obj)
+        
+        return obj
+    
+    
+    def edit(self, id: int, **kwargs) -> SuratMasuk | None:
+        obj = self.session.get(SuratMasuk, id)
+        if obj is None:
+            return None
+        for key, value in kwargs.items():
+            setattr(obj, key, value)
+            
+        self.session.flush()
+        self.session.refresh(obj)
+        
+        # ----- KALAU TIDAK MAU DI LEMPAR KE SERVICE MENUTUP SESSION -----
+        # self.session.commit()
+        # self.session.refresh(obj)
+        
+        return obj
+    
+    def hapus(self, id: int) -> None:
+        obj = self.session.get(SuratMasuk, id)
+        if obj is None:
+            return None
+        self.session.delete(obj)
+        # self.session.commit()
+        return obj
+        
+    def lihat(self, id: int) -> SuratMasuk | None:
+        hasil = self.session.get(SuratMasuk, id)
+        return hasil
+    
+    def lihat_semua(self) -> list[SuratMasuk]:
+        return self.session.scalars(select(SuratMasuk)).all()
+    
+class SuratKeluarRepository:
+    def __init__(self, session=None):
+        if session is None:
+            session = db.session
+        self.session = session
+        
+    def tambah(self, **kwargs) -> SuratKeluar:
+        obj = SuratKeluar(**kwargs)
+        self.session.add(obj)
+        # self.session.commit()
+        self.session.refresh(obj)
+        return obj
+    
+    def edit(self, id: int, **kwargs) -> SuratKeluar:
+        obj = self.session.get(SuratKeluar, id)
+        if obj is None:
+            return None
+        for key, value in kwargs.items():
+            setattr(obj, key, value)
+        # self.session.commit()
+        self.session.flush()
+        self.session.refresh(obj)
+        return obj
+    
+    def hapus(self, id: int) -> None:
+        obj = self.session.get(SuratKeluar, id)
+        if obj is None:
+            return None
+        self.session.delete(obj)
+        # self.session.commit()
+        return obj
+        
+    def lihat(self, id: int) -> SuratKeluar | None:
+        return self.session.get(SuratKeluar, id)
+    
+    def lihat_semua(self) -> list[SuratKeluar]:
+        return self.session.scalars(select(SuratKeluar)).all()
 
 class SuratRepository:
     def __init__(self, session=None):

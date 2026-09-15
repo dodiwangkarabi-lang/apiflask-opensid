@@ -4,11 +4,36 @@ from apiflask.fields import List, Nested
 from myapp.core.pagination import BasePaginationSchema
 from marshmallow import post_load, post_dump
 
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+
 # models
 from myapp.features.surat import models
 
 # class SuratPaginationSchema(BasePaginationSchema):
 #     pass
+
+class SuratMasukModelSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = models.SuratMasuk
+        load_instance = False
+        
+  
+class SuratMasukModelSchemaRequest(SQLAlchemyAutoSchema):
+    class Meta:
+        model = models.SuratMasuk
+        load_instance = False
+        exclude=(
+            "id", "config_id",
+            # "isi_disposisi",
+            # "berkas_scan", "lokasi_arsip",
+            # "nomor_urut"
+        )  
+
+        
+class SuratKeluarModelSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = models.SuratKeluar
+        load_instance = False
 
 
 def create_pagination_schema(item_schema):
@@ -105,6 +130,21 @@ class SuratSchema(BasePaginationSchema):
     # berkas_scan = fields.String(load_default=None, allow_none=True)
     # nomor_surat = fields.String(load_default=None, allow_none=True)
     
+class SuratKeluarSchema(Schema):
+    id = fields.Integer()
+    nomor_urut = fields.Integer()
+    # tanggal_penerimaan = fields.Date()
+    nomor_surat = fields.String()
+    kode_surat = fields.String()
+    tanggal_surat = fields.Date()
+    # perihal = fields.String()
+    tujuan = fields.String()
+    isi_singkat = fields.String()
+    
+    @post_load
+    def create_surat(self, data, **kwargs):
+        return models.SuratKeluar(**data)
+    
     
 
 class PencarianSuratResponse(SuratSchema):
@@ -132,3 +172,5 @@ class HasilPencarianResponseSchema(Schema):
     surat = fields.Nested(SuratSchema, many=False)
     
 PaginationSuratSchema = create_pagination_schema(SuratSchema)
+PaginationSuratMasukModelSchema = create_pagination_schema(SuratMasukModelSchema)
+paginationSuratKelurModelSchema = create_pagination_schema(SuratKeluarModelSchema)

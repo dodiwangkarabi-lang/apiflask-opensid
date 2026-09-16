@@ -4,6 +4,9 @@ from flask import url_for
 # ----- paginasi -----
 from myapp.core.pagination import paginate
 
+# from myapp.utils import paginasi
+from myapp.features.core.utils import paginated
+
 # ----- repository -----
 from myapp.features.surat import repository
 
@@ -35,10 +38,24 @@ def semua_surat(query_data):
     page = data_request.get("page", 1)
     page_size = data_request.get("page_size", 10)
 
-    surat_repository = repository.surat_repository.SuratRepository()
-    hasil = surat_repository.semua_surat(page=page, page_size=page_size)
+    surat_masuk_list = services.surat_keluar_service.semua_surat()
 
-    return hasil
+    if page is None:
+        page = 1
+        
+    surat_masuk_atau_keluar = surat_masuk_list
+    hasil = [
+        {
+            "id": value.id,
+            "tipe_surat": "surat_masuk" if isinstance(value, models.SuratMasuk) else "surat_keluar",
+            "surat": value
+        }
+        for value in surat_masuk_atau_keluar.data
+    ]
+    
+    res = paginated(hasil, page=page, page_size=page_size)
+
+    return res
 
 @surat_keluar_bp.post("/tambah/")
 @surat_keluar_bp.doc(

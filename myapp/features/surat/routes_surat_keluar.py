@@ -9,6 +9,7 @@ from myapp.features.core.utils import paginated
 
 # ----- repository -----
 from myapp.features.surat import repository
+from myapp.features.surat.repository import SuratRepository
 
 # ----- models -----
 from myapp.features.surat import models
@@ -25,7 +26,7 @@ from myapp.features.shared import schemas as shared_schemas
 
 # ----- services -----
 from myapp.features.surat import services
-
+from myapp.features.surat.services.helpers import latih_model_vectorizer
 
 # ----- surat keluar -----
 @surat_keluar_bp.get("/semua/") 
@@ -71,6 +72,11 @@ def tambah(query_data):
     PATH_MODEL = MEDIA_ROOT / "model"
     res = services.surat_keluar_service.create(media=PATH_MODEL, **data)
     if res.is_success:
+        
+        # update vectorizer
+        surat_repository = SuratRepository()
+        semua_surat = surat_repository.get_all()
+        temp = latih_model_vectorizer(semua_surat=semua_surat, media_root=MEDIA_ROOT)
         return res.data
     
     abort(400, message=res.message)

@@ -53,6 +53,9 @@ class SuratBaseService:
             isi_singkat = obj.isi_singkat
             isi_singkat_predict = modelML.predict([isi_singkat])[0]
             obj.kode_surat = isi_singkat_predict
+            
+            obj.config_id = 1
+            
             session.commit()
             
 

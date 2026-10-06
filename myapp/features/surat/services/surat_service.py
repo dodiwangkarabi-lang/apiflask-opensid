@@ -55,6 +55,7 @@ class SuratBaseService:
             obj.kode_surat = isi_singkat_predict
             
             obj.config_id = 1
+            obj.berkas_scan = None
             
             session.commit()
             

@@ -13,6 +13,53 @@ class DatasetTyping:
     kode_surat: str
 
 
+def latih_model_vectorizer(*, semua_surat=None, media_root=None):
+    
+    # semua_surat = SuratRepository().get_all()
+    
+    teks = [
+        surat.isi_singkat
+        for surat in semua_surat
+        if (surat.isi_singkat is not None)
+        and (surat.isi_singkat != "string")
+        and (surat.id is not None)
+    ]
+
+    document_ids = [
+        (surat.id, surat.nomor_surat)
+        for surat in semua_surat
+        if (surat.isi_singkat is not None)
+        and (surat.isi_singkat != "string")
+        and (surat.id is not None)
+    ]
+    
+    vectorizer = TfidfVectorizer(
+        lowercase=True,
+        strip_accents="unicode",
+    )
+    
+    X_database = vectorizer.fit_transform(teks)
+    
+    artifact = {
+        "vectorizer": vectorizer,
+        "matrix": X_database,
+        "document_ids": document_ids
+    }
+    
+    MEDIA_ROOT = media_root
+    # MEDIA_ROOT = current_app.config["MEDIA_ROOT"]
+    vectorizer_path = MEDIA_ROOT / "model" / "vectorizer.joblib"
+    
+    # ----- simpan -----
+    joblib.dump(artifact, MEDIA_ROOT / "model" / "vectorizer.joblib")
+    # joblib.dump(artifact, vectorizer_path) # temp
+    
+    # return semua_surat
+    # return artifact["vectorizer"]
+    
+    return True, "Berhasil disimpan ke media root"
+
+
 def latih_model(*, media_root, simpan=False, dataset: list[DatasetTyping]=None):
     """
 

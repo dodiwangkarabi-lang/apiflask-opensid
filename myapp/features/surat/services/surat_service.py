@@ -12,7 +12,7 @@ from typing import Unpack
 from pathlib import Path
 import joblib
 
-# from myapp.features.surat.services.helpers import latih_model
+from myapp.features.surat.services.helpers import latih_model, latih_model_vectorizer
 
 
 class SuratService:
@@ -54,6 +54,9 @@ class SuratBaseService:
             isi_singkat_predict = modelML.predict([isi_singkat])[0]
             obj.kode_surat = isi_singkat_predict
             session.commit()
+            
+            # update vectorizer
+            temp = latih_model_vectorizer(semua_surat=self.surat_repository.get_all(), media_root=media)
 
             return dto.Result(
                 data=obj, is_success=True, message="Surat masuk berhasil ditambahkan"

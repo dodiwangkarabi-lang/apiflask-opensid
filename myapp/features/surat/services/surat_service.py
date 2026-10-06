@@ -55,8 +55,6 @@ class SuratBaseService:
             obj.kode_surat = isi_singkat_predict
             session.commit()
             
-            # update vectorizer
-            temp = latih_model_vectorizer(semua_surat=self.surat_repository.get_all(), media_root=media)
 
             return dto.Result(
                 data=obj, is_success=True, message="Surat masuk berhasil ditambahkan"

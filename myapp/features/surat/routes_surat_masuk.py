@@ -6,6 +6,7 @@ from myapp.core.pagination import paginate
 
 # ----- repository -----
 from myapp.features.surat import repository
+from myapp.features.surat.repository import SuratRepository
 
 # ----- models -----
 from myapp.features.surat import models
@@ -29,6 +30,7 @@ from myapp.features.core.utils import paginated
 
 # ----- services -----
 from myapp.features.surat import services
+from myapp.features.surat.services.helpers import latih_model_vectorizer
 
 @surat_masuk_bp.get("/semua/") 
 @surat_masuk_bp.doc(security=[{"BearerAuth": []}])
@@ -65,7 +67,7 @@ def semua_surat(query_data):
 
 @surat_masuk_bp.post("/tambah/")
 @surat_masuk_bp.doc(
-    summary="Tambah Surat Masuk",
+    summary="Tambah Surat Masuknya",
     security=[{"BearerAuth": []}]
 )
 @surat_masuk_bp.input(schema.SuratMasukModelSchemaRequest, location="json", arg_name="query_data")
@@ -76,8 +78,16 @@ def tambah(query_data):
     
     MEDIA_ROOT = current_app.config["MEDIA_ROOT"]
     PATH_MODEL = MEDIA_ROOT / "model"
+    print("prev")
     res = services.surat_masuk_service.create(media=PATH_MODEL, **data)
+    print("next")
     if res.is_success:
+        
+        # update vectorizer
+        surat_repository = SuratRepository()
+        semua_surat = surat_repository.get_all()
+        temp = latih_model_vectorizer(semua_surat=semua_surat, media_root=MEDIA_ROOT)
+        
         return res.data
     else:
         abort(400, message=res.message)

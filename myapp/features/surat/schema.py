@@ -73,9 +73,11 @@ class HasilPencarianSuratResponseSchema(Schema):
     surat = fields.Nested(HasilPencarianSuratSchema)
 
 class CariSuratRequestSchema(Schema):
-    keyword = fields.String(required=True)
+    keyword = fields.String(required=False)
     kode_surat = fields.String(required=False)
     nilai_kemiripan_min = fields.Float(load_default=0.5, allow_none=True)
+    page = fields.Integer(load_default=1)
+    page_size = fields.Integer(load_default=10)
 
 class CariSchema(Schema):
     q = fields.String(required=False)
@@ -141,6 +143,12 @@ class SuratSchema(BasePaginationSchema):
     # berkas_scan = fields.String(load_default=None, allow_none=True)
     # nomor_surat = fields.String(load_default=None, allow_none=True)
     
+class SuratDenganSkorSchema(BasePaginationSchema):
+    id = fields.Integer()
+    tipe_surat = fields.String(load_default=None, allow_none=True)
+    surat = fields.Nested(SuratKeluarOrSuratMasuk, many=False)
+    skor_cosine_similarity = fields.Float(load_default=None, allow_none=True)
+    
 class SuratKeluarSchema(Schema):
     id = fields.Integer()
     nomor_urut = fields.Integer()
@@ -182,6 +190,7 @@ class HasilPencarianResponseSchema(Schema):
     )
     surat = fields.Nested(SuratSchema, many=False)
     
+PaginationSuratDenganSkorSchema = create_pagination_schema(SuratDenganSkorSchema)
 PaginationSuratSchema = create_pagination_schema(SuratSchema)
 PaginationSuratMasukModelSchema = create_pagination_schema(SuratMasukModelSchema)
 paginationSuratKelurModelSchema = create_pagination_schema(SuratKeluarModelSchema)

@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import Optional, TypedDict, Unpack
 import random
 from datetime import date, datetime, time
 
@@ -72,3 +72,31 @@ class SuratMasukRequest:
     pengirim: str = None
     tanggal_penerimaan: str = None
     lokasi_arsip: str = None
+    
+    
+{
+  "berkas_scan": "string",
+  "isi_disposisi": "string",
+  "isi_singkat": "string",
+  "kode_surat": "string",
+  "lokasi_arsip": "string",
+  "nomor_surat": "string",
+  "nomor_urut": 0,
+  "pengirim": "string",
+  "tanggal_penerimaan": "2026-09-30",
+  "tanggal_surat": "2026-09-30"
+}
+
+class SuratOptions(TypedDict):
+    berkas_scan: str
+    isi_disposisi: str
+    isi_singkat: str
+    kode_surat: str
+    lokasi_arsip: str
+    nomor_surat: str
+    nomor_urut: int
+    pengirim: str
+    tanggal_penerimaan: str
+    tanggal_surat: str
+    
+# SuratMasukUnpack = Unpack[SuratMasukOptions]

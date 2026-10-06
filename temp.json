@@ -1,0 +1,32 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "surat": {
+        "berkas_scan": "1785765884Picture1__sid__MoRQSFt.png",
+        "id": 1,
+        "isi_singkat": "Perangkat nikah",
+        "kode_surat": "474.2",
+        "nomor_surat": "450.2/01/I/2026",
+        "tanggal_surat": "2026-01-06"
+      },
+      "tipe_surat": "surat_keluar"
+    },
+    {
+      "id": 2,
+      "surat": {
+        "berkas_scan": "1785765914Screenshot2026-08-02143603__sid__185Rbhj.png",
+        "id": 2,
+        "isi_singkat": "Surat keterangan usaha",
+        "kode_surat": "511.1",
+        "nomor_surat": "511.1/02/I/2026",
+        "tanggal_surat": "2026-01-08"
+      },
+      "tipe_surat": "surat_keluar"
+    }
+  ],
+  "page": 1,
+  "page_size": 2,
+  "total": 39,
+  "total_pages": 20
+}

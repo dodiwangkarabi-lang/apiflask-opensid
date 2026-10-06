@@ -1,6 +1,6 @@
 # from __future__ import annotations
 from typing import Any, Generic, TypeVar, TYPE_CHECKING, List
-from sqlalchemy import select, union_all
+from sqlalchemy import select, union_all, tuple_
 from myapp.extensions import db
 from myapp.features.surat import models
 
@@ -70,11 +70,20 @@ class SuratKeluarRepository:
             session = db.session
         self.session = session
         
+    # def tambah(self, **kwargs) -> SuratKeluar:
+    #     obj = SuratKeluar(**kwargs)
+    #     self.session.add(obj)
+    #     # self.session.commit()
+    #     self.session.refresh(obj)
+    #     return obj
+    
     def tambah(self, **kwargs) -> SuratKeluar:
         obj = SuratKeluar(**kwargs)
         self.session.add(obj)
+        self.session.flush()
         # self.session.commit()
         self.session.refresh(obj)
+        
         return obj
     
     def edit(self, id: int, **kwargs) -> SuratKeluar:
@@ -100,6 +109,9 @@ class SuratKeluarRepository:
         return self.session.get(SuratKeluar, id)
     
     def lihat_semua(self) -> list[SuratKeluar]:
+        return self.session.scalars(select(SuratKeluar)).all()
+    
+    def get_all(self) -> list[SuratKeluar]:
         return self.session.scalars(select(SuratKeluar)).all()
 
 class SuratRepository:
@@ -131,14 +143,29 @@ class SuratRepository:
     def get_all(self) -> list[SuratKeluar | SuratMasuk]:
         surat_keluar = self.session.scalars(
             select(SuratKeluar)
-            .where(SuratKeluar.berkas_scan.is_not(None))
+            # .where(SuratKeluar.berkas_scan.is_not(None))
         ).all()
 
         surat_masuk = self.session.scalars(
             select(SuratMasuk)
-            .where(SuratMasuk.berkas_scan.is_not(None))
+            # .where(SuratMasuk.berkas_scan.is_not(None))
         ).all()
 
+        return surat_keluar + surat_masuk
+    
+    def get_all_by_data(self, scores: list[tuple[int, str]]) -> list[SuratKeluar | SuratMasuk]:
+        stmt_surat_keluar = (
+            select(SuratKeluar)
+            .where(tuple_(SuratKeluar.id, SuratKeluar.nomor_surat).in_(scores))
+        )
+        surat_keluar = self.session.scalars(stmt_surat_keluar).all()
+        
+        stmt_surat_masuk = (
+            select(SuratMasuk)
+            .where(tuple_(SuratMasuk.id, SuratMasuk.nomor_surat).in_(scores))
+        )
+        surat_masuk = self.session.scalars(stmt_surat_masuk).all()
+        
         return surat_keluar + surat_masuk
     
     def get_by_kode_surat(self, kode: str) -> list[SuratKeluar | SuratMasuk] | None:
@@ -154,18 +181,37 @@ class SuratRepository:
 
         return surat_keluar + surat_masuk
     
-    def semua_surat(self, page=None, page_size=10, **kwargs):
+    def semua_surat(self, page=None, page_size=10, skor_cosine=None, **kwargs):
         if page is None:
             page = 1
-        surat_masuk_atau_keluar = self.get_all()
+        
+        if skor_cosine is not None:
+            surat_masuk_atau_keluar = self.get_all_by_data(scores=skor_cosine.data)
+        else:
+            surat_masuk_atau_keluar = self.get_all()
         hasil = [
             {
                 "id": value.id,
                 "tipe_surat": "surat_masuk" if isinstance(value, SuratMasuk) else "surat_keluar",
-                "surat": value
+                "surat": value,
+                "skor_cosine_similarity": skor_cosine.scores[i] if skor_cosine is not None else ""
             }
-            for value in surat_masuk_atau_keluar
+            # for value in surat_masuk_atau_keluar
+            for i, value in enumerate(surat_masuk_atau_keluar)
         ]
+        
+        # ----- sort hasil -----
+        # sort by skor cosine similarity
+        if skor_cosine is not None:
+            hasil = sorted(hasil, key=lambda x: x["skor_cosine_similarity"], reverse=True)
+            
+        kode_surat = kwargs.get("kode_surat")
+        if kode_surat:
+            hasil = [
+                i
+                for i in hasil
+                if i["surat"].kode_surat == kode_surat
+            ]
         
         hasil = paginated(hasil, page=page, page_size=page_size)
 

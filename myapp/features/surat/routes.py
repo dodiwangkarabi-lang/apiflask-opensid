@@ -1,5 +1,6 @@
 from apiflask import APIBlueprint, abort
-from flask import url_for
+from flask import url_for, current_app
+import joblib
 
 # ----- paginasi -----
 from myapp.core.pagination import paginate
@@ -20,7 +21,10 @@ from .schema import CariSchema
 from . import schema
 
 # ----- service -----
-from .services import PencarianSuratService
+from .services.pencarian_surat_service import PencarianSuratService, PencarianParams, PencarianResult
+
+# ----- repository -----
+from myapp.features.surat.repository import SuratRepository
 
 # ----- semua surat (Surat Masuk | Surat Keluar) -----
 @surat_bp.get("/semua-surat")
@@ -39,6 +43,42 @@ def semua_surat(query_data):
     return hasil
 
 
+@surat_bp.get("/cari-surat-by-cosine-similarity")
+@surat_bp.doc(security=[{"BearerAuth": []}])
+@surat_bp.input(schema.CariSuratRequestSchema, location="query")
+@surat_bp.output(schema.PaginationSuratDenganSkorSchema(many=False))
+# @jwt_required()
+def cari_by_cosine_similarity(query_data):
+    data_request = query_data
+
+    surat_repository = repository.SuratRepository()
+    pencarian_susrat_service = PencarianSuratService(surat_repository=surat_repository)
+    
+    MEDIA_ROOT = current_app.config["MEDIA_ROOT"]
+    artifact_path = MEDIA_ROOT / "model" / "vectorizer.joblib"
+    artifact = joblib.load(artifact_path)
+    
+    params = PencarianParams(
+        keyword=data_request.get("keyword", ""),
+        threshold=data_request.get("nilai_kemiripan_min", 0.5),
+        artifact=artifact
+    )
+    
+    hasil_pencarian = pencarian_susrat_service.cari_by_cosine(params=params)
+    
+    surat_repository = SuratRepository()
+    hasil = surat_repository.semua_surat(
+        skor_cosine=hasil_pencarian,
+        page=data_request.get("page", 1),
+        page_size=data_request.get("page_size", 10),
+        kode_surat=data_request.get("kode_surat", ""),
+    )
+    # print(hasil)
+    
+    
+    return hasil
+
+
 @surat_bp.get("/cari-surat")
 @surat_bp.doc(security=[{"BearerAuth": []}])
 @surat_bp.input(schema.CariSuratRequestSchema, location="query")
@@ -50,8 +90,10 @@ def cari_surat(query_data):
     surat_repository = repository.SuratRepository()
     pencarian_susrat_service = PencarianSuratService(surat_repository=surat_repository)
     hasil = pencarian_susrat_service.cari(
-        keyword=data_request["keyword"],
-        kode_surat=data_request["kode_surat"],
+        # keyword=data_request["keyword"],
+        keyword=data_request.get("keyword", ""),
+        kode_surat = data_request.get("kode_surat", ""),
+        # kode_surat=data_request["kode_surat"],
         nilai_kemiripan_min=(
             float(data_request["nilai_kemiripan_min"])
             if data_request["nilai_kemiripan_min"]

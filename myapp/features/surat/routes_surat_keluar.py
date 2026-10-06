@@ -1,5 +1,5 @@
 from apiflask import APIBlueprint, abort
-from flask import url_for
+from flask import url_for, current_app
 
 # ----- paginasi -----
 from myapp.core.pagination import paginate
@@ -67,12 +67,13 @@ def semua_surat(query_data):
 def tambah(query_data):
     data = query_data
     
-    res = services.surat_keluar_service.create(**data)
+    MEDIA_ROOT = current_app.config["MEDIA_ROOT"]
+    PATH_MODEL = MEDIA_ROOT / "model"
+    res = services.surat_keluar_service.create(media=PATH_MODEL, **data)
     if res.is_success:
         return res.data
     
-    hasil = None
-    return hasil
+    abort(400, message=res.message)
 
 @surat_keluar_bp.get("/<int:surat_keluar_id>/lihat")
 @surat_keluar_bp.doc(

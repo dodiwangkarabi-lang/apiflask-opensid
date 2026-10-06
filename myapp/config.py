@@ -20,6 +20,9 @@ class Config:
     # Refresh token berlaku 7 hari
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=7)
     
+    MEDIA_ROOT = MEDIA_ROOT
+    BASE_DIR = BASE_DIR
+    
     
     
     """

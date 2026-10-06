@@ -34,7 +34,8 @@ def latih_model(*, media_root, simpan=False, dataset: list[DatasetTyping]=None):
     for value in dataset:
         X_train.append(value.isi_singkat)
         y_train.append(value.kode_surat)
-        document_ids.append(value.id)
+        ids = (value.id, value.nomor_surat) # (id, nomor_surat)
+        document_ids.append(ids)
     
     # X_train = dataset["isi_singkat"]
     # y_train = dataset["kode_surat"]
@@ -47,8 +48,8 @@ def latih_model(*, media_root, simpan=False, dataset: list[DatasetTyping]=None):
         ("tfidf", TfidfVectorizer(
             lowercase=True,
             strip_accents="unicode",
-            ngram_range=(1, 1),
-            max_features=5000
+            # ngram_range=(1, 1),
+            # max_features=5000
         )),
         ("classifier", RandomForestClassifier(
             n_estimators=300,
@@ -77,4 +78,6 @@ def latih_model(*, media_root, simpan=False, dataset: list[DatasetTyping]=None):
             "document_ids": document_ids
         }
         joblib.dump(artifact, path_model / "vectorizer.joblib")
+        
+    return model
         

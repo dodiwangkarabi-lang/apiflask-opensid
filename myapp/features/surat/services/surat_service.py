@@ -12,6 +12,8 @@ from typing import Unpack
 from pathlib import Path
 import joblib
 
+# from myapp.features.surat.services.helpers import latih_model
+
 
 class SuratService:
     def __init__(self, surat_repository: SuratRepository):
@@ -36,7 +38,16 @@ class SuratBaseService:
         media = kwargs.pop("media", None)
         if media is None:
             return dto.Result(data=None, is_success=False, message="Media not found")
-        modelML = joblib.load(media / "model_klasifikasi.joblib")
+        
+        # latih model
+        # surat_repo = SuratRepository()
+        # semua_surat = surat_repo.get_all()
+        # modelML = latih_model(media_root=media, simpan=True, dataset=semua_surat)
+        
+        modelML = joblib.load(media / "model_klasifikasi.joblib") # hanya load
+        
+        
+        
         try:
             obj = self.surat_repository.tambah(**kwargs)
             isi_singkat = obj.isi_singkat
